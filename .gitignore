@@ -1,0 +1,59 @@
+# ── Python ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.env
+
+# ── Node / frontend ─────────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/build/
+npm-debug.log*
+
+# ── Models & runtime data ────────────────────────────────────────────────
+# Both now live OUTSIDE this directory (see backend/ocr_paths.py):
+#     OCR_MODELS_DIR  default <repo_parent>/OCR-models   ~16 GB of weights
+#     OCR_DATA_DIR    default <repo_parent>/OCR-data     uploads, stores, logs
+# so there is nothing left in-tree to ignore. The entries that used to sit here
+# (backend/models/, Qwen2.5-32B-GPTQ/, backend/transformers-hf/) are gone from the
+# repo entirely. backend/models/ is kept below only as a guard: ocr_paths.py still
+# falls back to it if someone restores a pre-migration layout.
+backend/models/
+
+# ── Runtime temp / OCR intermediate files ───────────────────────────────
+# Retained as a safety net. These paths are no longer written to — OCR intermediates
+# go to <OCR_DATA_DIR>/temp — but a stale checkout or a hand-run script can still
+# drop them here, and they must never be committed.
+temp_*
+backend/temp_*
+*.tmp
+
+# ── Deckworks (Maker) local state ───────────────────────────────────────
+# User-uploaded PDFs and generated deck versions. Repo-internal and NOT covered by
+# anything above, so without this a future `git init` would commit user documents.
+deckworks/.deckworks/
+deckworks/frontend/dist/
+
+# ── Logs ────────────────────────────────────────────────────────────────
+*.log
+backend_run.log
+output.log
+pipeline_debug.log
+frontend/frontend.log
+
+# ── Local env / secrets ─────────────────────────────────────────────────
+.env
+frontend/.env
+
+# ── Editor / OS ─────────────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+
+# ── Scratch / experiments ───────────────────────────────────────────────
+scratch_*.py
+backend/scratch_*.py
+backup/frontend.zip

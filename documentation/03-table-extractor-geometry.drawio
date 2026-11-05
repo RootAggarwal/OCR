@@ -1,0 +1,125 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="table_extractor Geometry Pipeline" id="tableextractor">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="1750" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="c1" value="TableTransformerParser.get_instance() (singleton)&#10;detect_tables(full_image, threshold=0.5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="20" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c2" value="_merge_stacked_boxes&#10;merge header-band/body splits &amp; overlapping dupes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="100" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c3" value="Pad boxes: BOX_PAD=20, BOX_PAD_BOTTOM=80 or 15% height&#10;(detector routinely clips last data row)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="180" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c4" value="_is_plausible_table gate&#10;reject: &lt;2 cols, &lt;2 rows, &gt;25% cells &gt;8 words" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="330" y="260" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c5" value="Per detected table box: _extract_table_crop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="330" y="340" width="340" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c6" value="TATR structure pass (0.6, retry 0.2 if &lt;2 rows/cols)&#10;-&gt; columns L-R, rows T-B, header boxes, spanning cells" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="310" y="410" width="380" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c7" value="Drop edge slivers -&gt; drop detached trailing rows&#10;(order matters)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="310" y="490" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c8" value="Trim bottom padding to last real row (row geometry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="310" y="565" width="380" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c9" value="VLM: _detect_groups_and_headers&#10;(# side-by-side blocks G, header names) — not cached (skew varies per page)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="310" y="635" width="380" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c10" value="k = round(num_struct_cols / groups)&#10;columns-per-block from geometry, VLM count is fallback only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="310" y="715" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c11" value="_split_bands / _band_layout&#10;slice crop into G vertical bands at column boundaries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="310" y="790" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c12" value="_read_header_robust&#10;retries _read_header_by_columns x3, keeps richest;&#10;_read_subheader_strip as targeted fallback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="80" y="865" width="330" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c13" value="_read_bands_batched&#10;one batched generate() over all bands&#10;_token_budget = rows*k*14+256, clamped [2048,12000]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="440" y="865" width="330" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c14" value="Column count ignored in band?&#10;(&gt;50% rows wrong cell count)" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="950" width="270" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c15" value="Ruled lines detected (&gt;=2)?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1050" width="270" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c16" value="_read_cells_geometric&#10;per-cell crop; y-bounds snap to ruled lines;&#10;blank decided by ink fraction (_is_blank_cell)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1050" width="300" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c17" value="Skip escalation (unruled/handwritten:&#10;per-cell crops come back as junk)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1050" width="300" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c18" value="_structured_quality_ok gate&#10;MERGED_CELL_FRACTION_MAX=0.06 (multi-number cells)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1150" width="380" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c19" value="Grid looks column-merged?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="1230" width="280" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c20" value="Try alternatives:&#10;_geometry_single_block (groups=1)&#10;_vlm_structured_table (unconstrained, enhanced crop)&#10;-&gt; cleaner (lower merged-cell %) wins" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1220" width="320" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c21" value="Assembly:&#10;_blocks_to_wide_html (display, real colspan/rowspan)&#10;_blocks_to_long_rows (DB unpivot: page/block/row/col + trust flag)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="330" y="1330" width="340" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c22" value="Return { tables, boxes, structured }&#10;never raises — empty shape on any failure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="330" y="1420" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c1" target="c2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c2" target="c3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c3" target="c4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d4" value="pass" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c4" target="c5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c5" target="c6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c6" target="c7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d7" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c7" target="c8"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d8" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c8" target="c9"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d9" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c9" target="c10"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d10" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c10" target="c11"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d11" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c11" target="c12"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d12" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c11" target="c13"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d13" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c13" target="c14"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d14" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c14" target="c15"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d15" value="no ruled lines" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c15" target="c17"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d16" value=">=2 ruled lines" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c15" target="c16"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d17" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c12" target="c18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d18" value="no" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c14" target="c18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d19" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c17" target="c18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d20" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c16" target="c18"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d21" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c18" target="c19"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d22" value="yes" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c19" target="c20"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d23" value="no — band path stands" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c19" target="c21"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d24" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c20" target="c21"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d25" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="c21" target="c22"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="d26" value="fail (TATR unavailable / detection failure)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;" edge="1" parent="1" source="c4" target="c22"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

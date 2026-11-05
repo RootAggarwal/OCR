@@ -1,0 +1,50 @@
+# OCR backend dependencies.
+#
+# PyTorch MUST come from the CUDA index, not PyPI. `pip install torch` pulls the
+# CPU-only wheel, which silently turns the whole OCR path into a ~33 GB fp32 CPU
+# load — it does not error, it just becomes unusably slow. Install with:
+#
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu130
+#
+# and verify afterwards:  python -c "import torch; print(torch.cuda.is_available())"
+
+# --- Web server -------------------------------------------------------------
+fastapi>=0.141
+uvicorn>=0.52
+python-multipart>=0.0.32
+websockets>=15            # required by uvicorn for /ws/upload/ — without it the
+                          # WebSocket upgrade 404s and the frontend silently falls
+                          # back to POST /upload/
+
+# --- Model stack ------------------------------------------------------------
+torch==2.13.0+cu130
+torchvision==0.28.0+cu130
+transformers>=5.14,<6
+accelerate>=1.14          # required by device_map= / low_cpu_mem_usage= in ocr_olm.py
+huggingface_hub>=1.26
+safetensors>=0.8
+
+# --- OCR / PDF --------------------------------------------------------------
+olmocr>=0.4.27
+PyPDF2>=3.0
+pdf2image>=1.17
+pillow>=12
+numpy>=2
+
+# --- Output formatting / export ---------------------------------------------
+beautifulsoup4>=4.15
+Markdown>=3.10
+openpyxl>=3.1
+pydantic>=2.13
+psutil>=7
+
+# --- RAG (Corpus / Thinker tabs) --------------------------------------------
+# All three are guarded by available() checks — the app runs without them, but the
+# prose-search, figure-extraction and pgvector lanes silently no-op when missing.
+# psycopg additionally needs the pgvector container running (see run_project.sh).
+psycopg[binary]>=3.2
+sentence-transformers>=3
+pymupdf>=1.24
+
+neo4j
+python-dotenv
