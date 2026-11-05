@@ -1,7 +1,7 @@
 [project]
 name = "ocrproject"
 version = "0.1.0"
-description = "Add your description here"
+description = "Document OCR, table extraction, chat, and retrieval-augmented generation for PDF workflows"
 readme = "README.md"
 authors = [
     { name = "Sumeet Mavani", email = "mavani_sumeet@ongc.co.in" }
