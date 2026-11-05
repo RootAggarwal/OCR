@@ -48,6 +48,9 @@ frontend/frontend.log
 .env
 frontend/.env
 
+# Local AI/editor permissions and machine-specific settings
+.claude/settings.local.json
+
 # ── Editor / OS ─────────────────────────────────────────────────────────
 .DS_Store
 .vscode/
